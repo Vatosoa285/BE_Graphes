@@ -35,6 +35,7 @@ public class Path {
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
+        boolean min_trouve = false; 
         // TODO:
         
         //cas ou la liste de nodes est vide
@@ -42,22 +43,24 @@ public class Path {
         
         //cas ou la liste de node contient 1 seul node 
         else if (nodes.size()==1) return new Path(graph,nodes.get(0));  
-        
+ 
         //sinon recherche du chemin minimal 
         for (int i=0; i<nodes.size()-1; i++)  {
         	 List<Arc> successors = nodes.get(i).getSuccessors(); 
-        	 //pour chq noeud je crée le tableau des successeurs 
-        	 Arc arcmin = successors.get(0); 
-        	 boolean min_trouve = false; 
-        	 
-        	 for (Arc arc : successors) { //parcours des arcs de la liste 
+          	 min_trouve=false; 
+        	 Arc arcmin = successors.get(0);     
+        	 for (Arc arc : successors) { //parcours des arcs issus d'un noeud 
         		 if (arc.getDestination()==nodes.get(i+1)) {
-        			 min_trouve=true; 
-        			 if (arcmin.getMinimumTravelTime() < arc.getMinimumTravelTime()){
+        			 min_trouve=true;  
+        			 if (arcmin.getMinimumTravelTime()>arc.getMinimumTravelTime()){
         				 arcmin = arc; 
         			 }
         		 }      		 
-        	 }      	  
+        	 }      
+         if (!min_trouve) {
+        	 throw new IllegalArgumentException("error");
+         }
+         arcs.add(arcmin);          
         }    
         return new Path(graph, arcs);
     }
@@ -79,29 +82,34 @@ public class Path {
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
+        boolean min_trouve = false;
         // TODO:
-        
+        	 
         //cas ou la liste de nodes est vide
         if (nodes.size()==0) return new Path(graph);
         
         //cas ou la liste de node contient 1 seul node 
         else if (nodes.size()==1) return new Path(graph,nodes.get(0));  
-        
+     
         //sinon recherche du chemin minimal 
         for (int i=0; i<nodes.size()-1; i++)  {
         	 List<Arc> successors = nodes.get(i).getSuccessors(); 
         	 //pour chq noeud je crée le tableau des successeurs 
-        	 Arc arcmin = successors.get(0); 
-        	 boolean min_trouve = false; 
-        	 
+        	 Arc arcmin = successors.get(0);      	 
+        	 min_trouve=false; 
         	 for (Arc arc : successors) { //parcours des arcs de la liste 
         		 if (arc.getDestination()==nodes.get(i+1)) {
         			 min_trouve=true; 
-        			 if (arcmin.getLength()< arc.getLength()){
+        			 if (arcmin.getLength()>arc.getLength()){
         				 arcmin = arc; 
         			 }
         		 }      		 
-        	 }      	  
+        	 }    
+        	 if (!min_trouve) {
+            	 throw new IllegalArgumentException("error");
+             }
+             arcs.add(arcmin); 
+             
         }    
         
         return new Path(graph, arcs);
@@ -252,14 +260,15 @@ public class Path {
     	// c'est vide 
     	if (this.isEmpty()) val = true; 
     	// ça ne contient qu'un seul noeud 
-    	else if (this.arcs.size()==0 ) val= true;  	
-    	//the first arc has for origin the origin of the path
-    	else if (arcs.get(0).getOrigin()==this.getOrigin()) val=true; 
-    	int i =0; 
-    	while (val && i<(arcs.size()-2)) {
-    		if(arcs.get(i).getDestination()==arcs.get(i+1).getOrigin()) val=true; 
-    		i++; 
-    	}
+    	else if (this.arcs.size()==0) val= true;  	
+    	//the first arc has for origin the origin of the path   	
+    	else if (arcs.get(0).getOrigin()==this.getOrigin()) { 
+    		val=true;   	  	
+    		int i =0;    	
+	    	while (val && i<(arcs.size()-2)) {
+	    		if(arcs.get(i).getDestination()!=arcs.get(i+1).getOrigin()) val=false; 
+	    		i++; 
+    	} }
     	return val; 
     	//DONE 
     }
