@@ -30,12 +30,35 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         // TODO:
+        
+        //cas ou la liste de nodes est vide
+        if (nodes.size()==0) return new Path(graph);
+        
+        //cas ou la liste de node contient 1 seul node 
+        else if (nodes.size()==1) return new Path(graph,nodes.get(0));  
+        
+        //sinon recherche du chemin minimal 
+        for (int i=0; i<nodes.size()-1; i++)  {
+        	 List<Arc> successors = nodes.get(i).getSuccessors(); 
+        	 //pour chq noeud je crée le tableau des successeurs 
+        	 Arc arcmin = successors.get(0); 
+        	 boolean min_trouve = false; 
+        	 
+        	 for (Arc arc : successors) { //parcours des arcs de la liste 
+        		 if (arc.getDestination()==nodes.get(i+1)) {
+        			 min_trouve=true; 
+        			 if (arcmin.getMinimumTravelTime() < arc.getMinimumTravelTime()){
+        				 arcmin = arc; 
+        			 }
+        		 }      		 
+        	 }      	  
+        }    
         return new Path(graph, arcs);
     }
 
@@ -51,12 +74,36 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         // TODO:
+        
+        //cas ou la liste de nodes est vide
+        if (nodes.size()==0) return new Path(graph);
+        
+        //cas ou la liste de node contient 1 seul node 
+        else if (nodes.size()==1) return new Path(graph,nodes.get(0));  
+        
+        //sinon recherche du chemin minimal 
+        for (int i=0; i<nodes.size()-1; i++)  {
+        	 List<Arc> successors = nodes.get(i).getSuccessors(); 
+        	 //pour chq noeud je crée le tableau des successeurs 
+        	 Arc arcmin = successors.get(0); 
+        	 boolean min_trouve = false; 
+        	 
+        	 for (Arc arc : successors) { //parcours des arcs de la liste 
+        		 if (arc.getDestination()==nodes.get(i+1)) {
+        			 min_trouve=true; 
+        			 if (arcmin.getLength()< arc.getLength()){
+        				 arcmin = arc; 
+        			 }
+        		 }      		 
+        	 }      	  
+        }    
+        
         return new Path(graph, arcs);
     }
 
@@ -198,11 +245,23 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
+     * Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
-        return false;
+    	boolean val=false; 
+    	// c'est vide 
+    	if (this.isEmpty()) val = true; 
+    	// ça ne contient qu'un seul noeud 
+    	else if (this.arcs.size()==0 ) val= true;  	
+    	//the first arc has for origin the origin of the path
+    	else if (arcs.get(0).getOrigin()==this.getOrigin()) val=true; 
+    	int i =0; 
+    	while (val && i<(arcs.size()-2)) {
+    		if(arcs.get(i).getDestination()==arcs.get(i+1).getOrigin()) val=true; 
+    		i++; 
+    	}
+    	return val; 
+    	//DONE 
     }
 
     /**
@@ -246,7 +305,7 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * @deprecated Need to be implemented.
+     * Needed to be implemented.
      */
     public double getMinimumTravelTime() {
     	double minTime = 0; 
