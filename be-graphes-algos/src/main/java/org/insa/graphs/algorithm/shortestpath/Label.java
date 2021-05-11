@@ -7,26 +7,27 @@ import org.insa.graphs.model.Arc;
 
 public class Label implements Comparable<Label> {
 	//attributs 
-	
-	//sommet courant 
-	int sommet;  
-	
+		
 	//booléen si cout min trouvé 
-	boolean marque; 
-	
+	protected boolean marque; 	
 	//valeur courante du plus court chemin depuis l'origine -> sommet
-	Double cost; 
-	
-	
+	protected double cost; 	
 	//sommet précédent sur le chemin correspondant au plus court chemin courant 
 	int pere;
-	//arc prédécesseur à stoquer aussi 
-	private Arc arcmin_precedent; 
-	
+	//arc prédécesseur à stoquer aussi 		
 	//associer un label à chq noeud 
 	private int node_associe; 
 	
-	//méthodes : 
+	//constructeur 
+	
+	public Label(int nodeId, boolean marque, double cost, int father) {
+		this.node_associe = nodeId ; 
+		this.marque = marque ; 
+		this.cost = cost ; 
+		this.pere = father ; } 
+	
+	
+	//méthodes, getters et setters : 
 	public Double getCost() {
 		return cost;
 	}
@@ -45,22 +46,6 @@ public class Label implements Comparable<Label> {
 		this.node_associe = node_associe;
 	}
 
-
-	public Arc getArcmin_precedent() {
-		return arcmin_precedent;
-	}
-
-	public void setArcmin_precedent(Arc arcmin_precedent) {
-		this.arcmin_precedent = arcmin_precedent;
-	}
-
-	public int getSommet() {
-		return sommet;
-	}
-
-	public void setSommet(int sommet) {
-		this.sommet = sommet;
-	}
 
 	public boolean isMarque() {
 		return marque;

@@ -35,10 +35,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
      
         //association d'un label à chq sommet        
         for (int i = 0; i<graphe.size(); i++) {
-        	label[i].sommet=i; 
-        	label[i].cost= infini; 
-        	label[i].pere =0;      	       		       
-        	label[i].marque =false ;        	
+        	label[i] = new Label(i, false, Double.POSITIVE_INFINITY,-1);        	
         }
         
         //insertion du sommet origine dans la file de priorité 
