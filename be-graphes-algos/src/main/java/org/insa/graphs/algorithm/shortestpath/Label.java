@@ -17,6 +17,7 @@ public class Label implements Comparable<Label> {
 	//valeur courante du plus court chemin depuis l'origine -> sommet
 	Double cost; 
 	
+	
 	//sommet précédent sur le chemin correspondant au plus court chemin courant 
 	int pere;
 	//arc prédécesseur à stoquer aussi 
@@ -28,6 +29,10 @@ public class Label implements Comparable<Label> {
 	//méthodes : 
 	public Double getCost() {
 		return cost;
+	}
+	
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 	
 	//associer un label à chq noeud 
@@ -73,9 +78,8 @@ public class Label implements Comparable<Label> {
 		this.pere = pere;
 	}		
 		
-	//définir un compare to 
+	// compare to 
 	
-
 	@Override
 	public int compareTo(Label arg2) {
 		// TODO Auto-generated method stub
