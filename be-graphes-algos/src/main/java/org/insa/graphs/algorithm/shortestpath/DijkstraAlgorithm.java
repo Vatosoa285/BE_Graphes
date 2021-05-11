@@ -27,7 +27,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
-        Graph graphe = data.getGraph();       		
+        Graph graphe = data.getGraph();       		   
         BinaryHeap<Label> heap = new BinaryHeap<>(); 
         		
         Label[] label = new Label[graphe.size()]; 
