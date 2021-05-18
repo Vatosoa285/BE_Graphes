@@ -145,7 +145,7 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     	else
     	{
     		if (this.array.indexOf(x)>=0) 
-    			
+   			
     		{
     			index = this.array.indexOf(x);
     			if (index > this.currentSize-1)
@@ -156,8 +156,10 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     			E lastElem = this.array.get(this.size()-1); 
     			this.array.set(index,lastElem);
     			this.array.remove(this.size()-1); 
+    			
     			//mise à jour de la taille du tas 
     		    this.currentSize= this.currentSize-1; 
+    		    
     			//percolatedown ou up ? 
     			if (index > 0 && lastElem.compareTo(this.array.get(indexParent(index))) < 0) {
     				this.percolateUp(index); }

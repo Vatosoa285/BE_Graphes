@@ -13,27 +13,35 @@ public class Label implements Comparable<Label> {
 	//valeur courante du plus court chemin depuis l'origine -> sommet
 	protected double cost; 	
 	//sommet précédent sur le chemin correspondant au plus court chemin courant 
-	int pere;
+	Arc pere;
 	//arc prédécesseur à stoquer aussi 		
 	//associer un label à chq noeud 
 	private int node_associe; 
 	
 	//constructeur 
 	
-	public Label(int nodeId, boolean marque, double cost, int father) {
+	public Label(int nodeId, boolean marque, double cost, Arc father) {
 		this.node_associe = nodeId ; 
 		this.marque = marque ; 
 		this.cost = cost ; 
 		this.pere = father ; } 
 	
 	
-	//méthodes, getters et setters : 
+	//méthodes, getters et setter : 
 	public Double getCost() {
 		return cost;
 	}
 	
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+	
+	public Arc getPere() {
+		return pere;
+	}
+	
+	public void setPere(Arc F) {
+		this.pere = F;
 	}
 	
 	//associer un label à chq noeud 
@@ -55,13 +63,7 @@ public class Label implements Comparable<Label> {
 		this.marque = marque;
 	}
 
-	public int getPere() {
-		return pere;
-	}
-
-	public void setPere(int pere) {
-		this.pere = pere;
-	}		
+	
 		
 	// compare to 
 	

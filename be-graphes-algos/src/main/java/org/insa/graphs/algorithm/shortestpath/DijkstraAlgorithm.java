@@ -11,11 +11,12 @@ import org.insa.graphs.algorithm.utils.EmptyPriorityQueueException;
 import org.insa.graphs.model.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections; 
 
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
+
+
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
@@ -26,22 +27,25 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     @Override
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
+        
+      //Variables pour vérifier 
+        double ancien_cout = 0;
+        int nb_explores = 0 ;
+ 
         Graph graphe = data.getGraph();       		   
         BinaryHeap<Label> heap = new BinaryHeap<>(); 
         		
         Label[] label = new Label[graphe.size()]; 
         double infini = Double.POSITIVE_INFINITY;
      
-        //association d'un label à chq sommet        
+        //associating a label to each node        
         for (int i = 0; i<graphe.size(); i++) {
-        	label[i] = new Label(i, false, Double.POSITIVE_INFINITY,-1);        	
+        	label[i] = new Label(i, false, Double.POSITIVE_INFINITY,null);        	
         }
         
-        //insertion du sommet origine dans la file de priorité 
-        
+        //insertion du sommet origine dans la file de priorité        
        int origine = data.getOrigin().getId();      
-       label[origine].setCost(0);;
+       label[origine].setCost(0);
        heap.insert(label[origine]);
        
        // Notification à l'observateur de l'initialisation de la recherche (origine inséré dans le tas) 
@@ -52,86 +56,97 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	    Label currentNodeLabel;
     		  	
     	   	try {
-                currentNodeLabel = heap.findMin();
+                currentNodeLabel = heap.deleteMin();
             } catch (EmptyPriorityQueueException e) {
                 // Means that no new node was marked after the previous one
-                // And the previous node was the only one visited but not marked
-                // Means we reached and mark all nodes that we can visit
+                // also the previous node was the only one visited but not marked
+                // we've reached and marked all nodes that we can visit
                 break;
             }
     	   	
-    	   	//marquage des nodes 
-    	    try {
-                heap.remove(currentNodeLabel);
-            } catch (ElementNotFoundException ignored) { }
-            label[currentNodeLabel.getNode_associe()].setMarque(true);
+    	   	int currentID = currentNodeLabel.getNode_associe(); 
+    	   	Node currentNode = graphe.get(currentID);
+    	   	
+    	   	label[currentID].setMarque(true);
+        	this.notifyNodeMarked(currentNode);
+        	
+        	if (currentNode==data.getDestination()) {
+        		this.notifyDestinationReached(data.getDestination());
+        	}
+        	
+        	else {
+        		//Vérification que les coûts des labels marqués sont croissants
+        		if(ancien_cout > currentNodeLabel.getCost()) { 
+            		System.out.println("Les coûts des Labels marqués  sont croissants.");
+            	}
+            ancien_cout = currentNodeLabel.getCost();
 
-    		//parcours des sommets successeurs  
-            for (Arc successor : graphe.get(currentNodeLabel.getNode_associe()).getSuccessors()) {
-                if(!data.isAllowed(successor)) continue;
-                int nextNodeId = successor.getDestination().getId();
-                if (!label[nextNodeId].isMarque()) {
-                    double w = data.getCost(successor);
-                    double oldDistance = label[nextNodeId].getCost();
-                    double newDistance = label[currentNodeLabel.getNode_associe()].getCost() + w;
-
-                    if (Double.isInfinite(oldDistance) && Double.isFinite(newDistance)) {
-                        notifyNodeReached(successor.getDestination());
-                    }
-            
-                    // Vérifie si les nouvelles distances sont plus courts, si oui, mettre à jour 
-                    if (newDistance < oldDistance) {
-                        label[nextNodeId].setCost(newDistance);
-                        label[nextNodeId].setPere(currentNodeLabel.getNode_associe());
-
-                        try {
-                            // mise à jour du node dans le tas
-                            heap.remove(label[nextNodeId]);
-                            heap.insert(label[nextNodeId]);
-                        } catch (ElementNotFoundException e) {
-                            // si le noeud n'est pas dans le tas, on l'insère 
-                            heap.insert(label[nextNodeId]);
-                        }
-                    }
-    	   }
-    	   
+    		//parcours des sommets successeurs du sommet courant 
+            for (Arc successor : currentNode.getSuccessors()) {
+                if(data.isAllowed(successor)) {
+                	Node nextNode = successor.getDestination();
+                	int nextNodeID = nextNode.getId();
+            		Label nextLabel = label[nextNodeID];
+            		
+            		if (!nextLabel.isMarque()) {
+            			//si ils ne sont pas déjà marqués, on calcule le nouveau cout
+            			double new_cost = Double.min(nextLabel.getCost(), currentNodeLabel.getCost()+data.getCost(successor));
+            			if (new_cost < nextLabel.getCost()) {
+            				//si le nouveau cout est différent de l'ancien on le màj
+            				if (label[nextNodeID].getCost()!=Double.POSITIVE_INFINITY) {
+            					//y était déjà dans le tas donc on l'enlève pour le màj
+            					label[nextNodeID].setCost(new_cost);
+            					heap.remove(label[nextNodeID]);
+            					heap.insert(nextLabel);
+            					//on màj son père
+                				label[nextNodeID].setPere(successor);
+            				}
+            				else {
+            					label[nextNodeID].setCost(new_cost);
+                				heap.insert(nextLabel);
+                				label[nextNodeID].setPere(successor);
+                				this.notifyNodeReached(nextNode);
+            				}
+            				nb_explores++;            					
+            			}          		
+            		}
+                } 
             }
-      
+            System.out.println("Le nombre de successeurs explorés est : " + nb_explores + " pour " + currentNode.getNumberOfSuccessors() + " successeur(s).");
+        	nb_explores = 0;     
+        } 
        }
-        
-        // TODO:
+        	        	
+                // TODO:
+       //la destination est soit atteignable soit non atteignable 
        
-       if (!label[data.getDestination().getId()].isMarque()) {
-           solution = new ShortestPathSolution(data, AbstractSolution.Status.INFEASIBLE);
+       ShortestPathSolution solution = null;
+       Node dest = data.getDestination(); 
+       Label label_dest = label [dest.getId()]; 
+       Arc arc = label_dest.getPere(); 
+       ArrayList<Arc> arcs = new ArrayList<>();
+       
+       if (arc==null) { 
+           solution = new ShortestPathSolution(data,AbstractSolution.Status.INFEASIBLE);
        } else {
            // Destination trouvée 
     	   
     	   //notification à l'observateur 
-    	      	   
-           notifyDestinationReached(data.getDestination());
-
-           ArrayList<Node> pathNodes = new ArrayList<>();
-           pathNodes.add(data.getDestination());
-           Node node = data.getDestination();
-           while (!node.equals(data.getOrigin())) {
-               Node fatherNode = graphe.getNodes().get(label[node.getId()].getPere());
-               pathNodes.add(fatherNode);
-               node = fatherNode;
+    	   while (arc != null) {
+               arcs.add(arc);
+               arc = label[arc.getOrigin().getId()].getPere();
            }
-           Collections.reverse(pathNodes);
+
+           // Reverse the path...
+           Collections.reverse(arcs);
 
            // Create the final solution.
-           Path solutionPath;
-           if (data.getMode().equals(AbstractInputData.Mode.LENGTH)) {
-               solutionPath = Path.createShortestPathFromNodes(graphe, pathNodes);
-           } else {
-               solutionPath = Path.createFastestPathFromNodes(graphe, pathNodes);
-           }
-
-           solution = new ShortestPathSolution(data, AbstractSolution.Status.OPTIMAL, solutionPath);
+           solution = new ShortestPathSolution(data, AbstractSolution.Status.OPTIMAL, new Path(graphe, arcs));
        }
+       
+ 
         
         return solution;
     }
-
 }
+
