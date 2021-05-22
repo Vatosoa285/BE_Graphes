@@ -12,9 +12,8 @@ public class Label implements Comparable<Label> {
 	protected boolean marque; 	
 	//valeur courante du plus court chemin depuis l'origine -> sommet
 	protected double cost; 	
-	//sommet précédent sur le chemin correspondant au plus court chemin courant 
-	Arc pere;
-	//arc prédécesseur à stoquer aussi 		
+	//sommet précédent sur le chemin correspondant au plus court chemin courant (sauvegardé en tant qu'arc) 
+	Arc pere;	
 	//associer un label à chq noeud 
 	private int node_associe; 
 	
@@ -27,7 +26,7 @@ public class Label implements Comparable<Label> {
 		this.pere = father ; } 
 	
 	
-	//méthodes, getters et setter : 
+	// getters et setter : 
 	public Double getCost() {
 		return cost;
 	}
@@ -63,19 +62,33 @@ public class Label implements Comparable<Label> {
 		this.marque = marque;
 	}
 
+	//autres méthodes : 
 	
+	public double getTotalCost() { //cette méthode est redéfinie dans LabelStar 
+		return this.cost ;
+	}
+	
+	public double getEstimatedCost() { //hors de la prise en compte de Astar, le cout estimé à la destination est fixé nul 
+		return 0;
+	}
 		
-	// compare to 
+	// compare to : la version initiale établissait un ordre croissant des coûts depuis l'origine uniquement 
+	//extension du compare to pour ordonner les labels suivant un ordre croissant en se basant sur le coût total 
 	
 	@Override
 	public int compareTo(Label arg2) {
-		// TODO Auto-generated method stub
-		return (int)(this.cost-arg2.cost); 
-	}
-
-
-	
-				
+		// TODO Auto-generated method stub	
+		//return (int)(this.cost-arg2.cost); : la version d'avant 
+		
+		int ecart = (int)(this.getTotalCost()-arg2.getTotalCost());
+		
+		if (ecart ==0 ) { //si 2 labels ont le même coût total, on se basera sur le coût estimé à la destination 
+             ecart= (int) (this.getEstimatedCost() - arg2.getEstimatedCost()); 
+		}
+		return ecart; 
+		
+	} 
+   					
 } 
 	
 	
