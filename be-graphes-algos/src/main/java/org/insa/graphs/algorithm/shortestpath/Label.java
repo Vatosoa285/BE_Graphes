@@ -1,8 +1,5 @@
 package org.insa.graphs.algorithm.shortestpath;
 
-import java.util.ArrayList;   
-import java.util.List;
-
 import org.insa.graphs.model.Arc;
 
 public class Label implements Comparable<Label> {
@@ -78,14 +75,14 @@ public class Label implements Comparable<Label> {
 	@Override
 	public int compareTo(Label arg2) {
 		// TODO Auto-generated method stub	
-		//return (int)(this.cost-arg2.cost); : la version d'avant 
+		//return (int)(this.cost-arg2.cost); // la version d'avant 
 		
-		int ecart = (int)(this.getTotalCost()-arg2.getTotalCost());
+		int ecart = (int) (this.getTotalCost()-arg2.getTotalCost());
 		
-		if (ecart ==0 ) { //si 2 labels ont le même coût total, on se basera sur le coût estimé à la destination 
+		if (ecart == 0 ) { //si 2 labels ont le même coût total, on se basera sur le coût estimé à la destination 
              ecart= (int) (this.getEstimatedCost() - arg2.getEstimatedCost()); 
 		}
-		return ecart; 
+		return ecart;
 		
 	} 
    					

@@ -1,11 +1,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 
-//classes import
-import org.insa.graphs.algorithm.AbstractInputData;
 import org.insa.graphs.algorithm.AbstractSolution;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
-//exceptions import 
-import org.insa.graphs.algorithm.utils.ElementNotFoundException;
 import org.insa.graphs.algorithm.utils.EmptyPriorityQueueException;
 
 import org.insa.graphs.model.*;
@@ -36,7 +32,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         BinaryHeap<Label> heap = new BinaryHeap<>(); 
         		
         Label[] label = new Label[graphe.size()]; 
-        double infini = Double.POSITIVE_INFINITY;
+        
      
         //associating a label to each node        
         for (int i = 0; i<graphe.size(); i++) {
@@ -98,7 +94,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             					label[nextNodeID].setCost(new_cost);
             					heap.remove(label[nextNodeID]);
             					heap.insert(nextLabel);
-            					//on màj son père
+            					//on met à jour son père
                 				label[nextNodeID].setPere(successor);
             				}
             				else {
