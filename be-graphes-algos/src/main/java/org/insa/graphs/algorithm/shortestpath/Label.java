@@ -60,29 +60,33 @@ public class Label implements Comparable<Label> {
 	}
 
 	//autres méthodes : 
+		
 	
-	public double getTotalCost() { //cette méthode est redéfinie dans LabelStar 
-		return this.cost ;
+	public double getEstimatedCost() { //cette méthode est redéfinie dans LabelStar 
+		return 0; 
 	}
 	
-	public double getEstimatedCost() { //hors de la prise en compte de Astar, le cout estimé à la destination est fixé nul 
-		return 0;
+	public double getTotalCost() { //cette méthode est redéfinie dans LabelStar,,
+		return this.cost;
 	}
 		
-	// compare to : la version initiale établissait un ordre croissant des coûts depuis l'origine uniquement 
-	//extension du compare to pour ordonner les labels suivant un ordre croissant en se basant sur le coût total 
+	// compare to : la version initiale établissait un ordre croissant des coûts depuis l'origine uniquement (cost)
+	//pour Astar, on veut étendre celui-ci pour ordonner les labels suivant un ordre croissant en se basant sur le TotalCost 
+	
 	
 	@Override
 	public int compareTo(Label arg2) {
 		// TODO Auto-generated method stub	
+		
 		//return (int)(this.cost-arg2.cost); // la version d'avant 
 		
-		int ecart = (int) (this.getTotalCost()-arg2.getTotalCost());
+		int ecart = (int) (this.getTotalCost()-arg2.getTotalCost()); 
 		
 		if (ecart == 0 ) { //si 2 labels ont le même coût total, on se basera sur le coût estimé à la destination 
              ecart= (int) (this.getEstimatedCost() - arg2.getEstimatedCost()); 
 		}
-		return ecart;
+		
+		return ecart; 
 		
 	} 
    					

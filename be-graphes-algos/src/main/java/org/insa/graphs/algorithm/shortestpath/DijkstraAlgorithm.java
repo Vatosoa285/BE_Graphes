@@ -20,6 +20,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         super(data);             
     }
 
+
+    //associating a label to each node        
+    //pour que AStar marche il faut : 
+    //1.s'assurer que ça marche pour les labels de la classe "Label" ou ceux de la classe "LabelStar"
+    //2.bien mettre à jour les conditions, qui doivent mtn se baser sur TotalCost et non plus cost 
+    protected void Init(Label[] Label, Graph graph, ShortestPathData data) {
+   	 for (int i = 0 ; i < graph.size(); i++) {
+        	Label[i] = new Label(i, false, Double.POSITIVE_INFINITY, null) ;
+        }
+   }
+    
     @Override
     protected ShortestPathSolution doRun() {
         final ShortestPathData data = getInputData();
@@ -32,12 +43,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         BinaryHeap<Label> heap = new BinaryHeap<>(); 
         		
         Label[] label = new Label[graphe.size()]; 
-        
-     
-        //associating a label to each node        
-        for (int i = 0; i<graphe.size(); i++) {
-        	label[i] = new Label(i, false, Double.POSITIVE_INFINITY,null);        	
-        }
+        //initialisation de l'algo 
+        this.Init(label, graphe, data);
+       
         
         //insertion du sommet origine dans la file de priorité        
        int origine = data.getOrigin().getId();      
@@ -72,10 +80,10 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	else {
         		//Vérification que les coûts des labels marqués sont croissants
-        		if(ancien_cout > currentNodeLabel.getCost()) { 
-            		System.out.println("Les coûts des Labels marqués  sont croissants.");
+        		if(ancien_cout > currentNodeLabel.getTotalCost()) { 
+            		//System.out.println("Les coûts des Labels marqués  sont croissants.");
             	}
-            ancien_cout = currentNodeLabel.getCost();
+            ancien_cout = currentNodeLabel.getTotalCost();
 
     		//parcours des sommets successeurs du sommet courant 
             for (Arc successor : currentNode.getSuccessors()) {
@@ -88,9 +96,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             			//si ils ne sont pas déjà marqués, on calcule le nouveau cout
             			double new_cost = Double.min(nextLabel.getCost(), currentNodeLabel.getCost()+data.getCost(successor));
             			if (new_cost < nextLabel.getCost()) {
-            				//si le nouveau cout est différent de l'ancien on le màj
+            				//si le nouveau cout est différent de l'ancien on le met à jour
             				if (label[nextNodeID].getCost()!=Double.POSITIVE_INFINITY) {
-            					//y était déjà dans le tas donc on l'enlève pour le màj
+            					//y était déjà dans le tas donc on l'enlève pour le met à jour 
             					label[nextNodeID].setCost(new_cost);
             					heap.remove(label[nextNodeID]);
             					heap.insert(nextLabel);

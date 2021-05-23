@@ -2,14 +2,13 @@ package org.insa.graphs.algorithm.shortestpath;
 
 import org.insa.graphs.model.*;
 
-public class LabelStar extends Label {
+public class LabelStar extends Label{
 	
-	private double estimatedCost;  //coût estimé depuis la destination 
+	private double estimatedCost;  //coût estimé entre le Lable courant et le label destination : heuristique 
 	
 	public LabelStar(int nodeId, boolean marque, double cost, Arc father, double estCost) {
 		super(nodeId, marque, cost, father);
-		// TODO Auto-generated constructor stub
-		this.setEstimatedCost(estCost); 
+		this.estimatedCost= estCost; 
 	}
 
 	//getter et setter pour estimatedCost 
@@ -22,8 +21,8 @@ public class LabelStar extends Label {
 	}
 		
     //méthode qui prend en compte le coût depuis l'origine + le coût estimé à la destination 
-	public double getTotallCost() {
-		return this.estimatedCost + super.getCost(); 
+	public double getTotalCost() {
+		return this.getEstimatedCost() + this.getCost(); 
 	}
 	
 }
