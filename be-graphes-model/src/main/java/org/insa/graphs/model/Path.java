@@ -12,7 +12,7 @@ import java.util.List;
  * <p>
  * A path is represented as a list of {@link Arc} with an origin and not a list
  * of {@link Node} due to the multi-graph nature (multiple arcs between two
- * nodes) of the considered graphs.
+ * nodes) of the considered graphs. 
  * </p>
  *
  */

@@ -20,7 +20,7 @@ public class ArcInspectorFactory {
 
         // Common filters:
 
-        // No filter (all arcs allowed):
+        // No filter (all arcs allowed): //0
         filters.add(new ArcInspector() {
             @Override
             public boolean isAllowed(Arc arc) {
@@ -48,7 +48,7 @@ public class ArcInspectorFactory {
             }
         });
 
-        // Only road allowed for cars and length:
+        // Only road allowed for cars and length: //1 
         filters.add(new ArcInspector() {
             @Override
             public boolean isAllowed(Arc arc) {
@@ -78,7 +78,7 @@ public class ArcInspectorFactory {
             }
         });
 
-        // Only road allowed for cars and time:
+        // Only road allowed for cars and time: //2 temps, all roads alowed 
 
         filters.add(new ArcInspector() {
             @Override
@@ -107,7 +107,7 @@ public class ArcInspectorFactory {
             }
         });
 
-        filters.add(new ArcInspector() {
+        filters.add(new ArcInspector() { //3 temps, voiture 
             @Override
             public boolean isAllowed(Arc arc) {
                 return arc.getRoadInformation().getAccessRestrictions()

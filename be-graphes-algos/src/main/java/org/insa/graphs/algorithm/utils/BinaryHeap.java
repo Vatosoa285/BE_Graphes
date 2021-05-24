@@ -138,43 +138,38 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     @Override //////à faire 
     public void remove(E x) throws ElementNotFoundException { 
         // TODO:
-    	int index = 0; 
     	
     	if (isEmpty())
     		 throw new ElementNotFoundException (x); 
-    	else
-    	{
-    		if (this.array.indexOf(x)>=0) 
-   			
-    		{
-    			index = this.array.indexOf(x);
-    			if (index > this.currentSize-1)
-    			{
-    				throw new ElementNotFoundException (x); 
-    			}
-    			else {
-    			E lastElem = this.array.get(this.size()-1); 
-    			this.array.set(index,lastElem);
-    			this.array.remove(this.size()-1); 
-    			
-    			//mise à jour de la taille du tas 
-    		    this.currentSize= this.currentSize-1; 
-    		    
-    			//percolatedown ou up ? 
-    			if (index > 0 && lastElem.compareTo(this.array.get(indexParent(index))) < 0) {
-    				this.percolateUp(index); }
-    			else {
-    				this.percolateDown(index); 
-    			}	
-    			}
-    		}
-    		else 
-    		{
-    			throw new ElementNotFoundException (x); 
-    		}
-    		}
     	
-    	}
+    	int index = this.array.indexOf(x); 
+        	
+    	if (index >= this.currentSize || index < 0 )
+	    	{
+	    		throw new ElementNotFoundException (x); 
+	    	}
+    
+    	else 
+	    	{   //le dernier elt du tableau est mis dans index
+    		    //on supprime la dernière case du tableau <=> réduction de 1 de sa taille 
+		    	E lastElem = this.array.get(this.currentSize -1); 
+		    			
+		    	//this.array.remove(this.size()-1); 
+		    	this.array.set(index,lastElem);
+		
+		        //mise à jour de la taille du tas 
+		        this.currentSize= this.currentSize-1; 
+		    		        		    
+		    	//percolate down ou up ? 
+		        if (index != 0 && lastElem.compareTo(this.array.get(indexParent(index))) < 0) {
+		    		this.percolateUp(index); }
+		        else {
+		        	this.percolateDown(index); 
+		    			}	
+	    			}
+    		}
+    
+    	
     	
   
 

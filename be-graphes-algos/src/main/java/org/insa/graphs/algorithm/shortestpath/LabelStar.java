@@ -22,7 +22,7 @@ public class LabelStar extends Label{
 		
     //méthode qui prend en compte le coût depuis l'origine + le coût estimé à la destination 
 	public double getTotalCost() {
-		return this.getEstimatedCost() + this.getCost(); 
+		return this.getEstimatedCost() + super.getCost(); 
 	}
 	
 }
