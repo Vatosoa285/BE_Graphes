@@ -24,7 +24,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     //associating a label to each node        
     //pour que AStar marche il faut : 
     //1.s'assurer que ça marche pour les labels de la classe "Label" ou ceux de la classe "LabelStar"
-    //2.bien mettre à jour les conditions, qui doivent mtn se baser sur TotalCost et non plus cost 
+    //2.bien mettre à jour les coûts, qui doivent mtn se baser sur TotalCost et non plus cost 
     protected void Init(Label[] Labels, Graph graph, ShortestPathData data) {
    	 for (int i = 0 ; i < graph.size(); i++) {
         	Labels[i] = new Label(i, false, Double.POSITIVE_INFINITY, null) ;
@@ -36,7 +36,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         final ShortestPathData data = getInputData();
         
       //Variables pour vérifier 
-        double ancien_cout = 0;
+        
         int nb_explores = 0 ;
  
         Graph graphe = data.getGraph();       		   
@@ -63,7 +63,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
                 currentNodeLabel = heap.findMin();
             } catch (EmptyPriorityQueueException e) {
                 // Means that no new node was marked after the previous one
-                // also the previous node was the only one visited but not marked
                 // we've reached and marked all nodes that we can visit
                 break;
             }
@@ -71,18 +70,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	   	int currentID = currentNodeLabel.getNode_associe(); 
     	   	Node currentNode = graphe.get(currentID);
     	   	
-    	   	label[currentID].setMarque(true);
+    	   	label[currentID].setMarque(true); 	   	
         	this.notifyNodeMarked(currentNode);
         	
         	if (currentNode==data.getDestination()) {
         		this.notifyDestinationReached(data.getDestination());
         	}
         	
-        	else {
-        		
-            ancien_cout = currentNodeLabel.getTotalCost();
+        	else {   
+           
             heap.remove(currentNodeLabel);
-
+            
     		//parcours des sommets successeurs du sommet courant 
             for (Arc successor : currentNode.getSuccessors()) {
                 if(data.isAllowed(successor)) {
@@ -91,30 +89,28 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             		Label nextLabel = label[nextNodeID];
             		
             		if (!nextLabel.isMarque()) {
-            			//si ils ne sont pas déjà marqués, on calcule le nouveau cout
-            			double new_cost = Double.min(nextLabel.getCost(), currentNodeLabel.getCost()+data.getCost(successor));
-            			if (new_cost < nextLabel.getCost()) {
+            			//comparaison des couts actuel et nouveau 
+            			double new_cost = Double.min(nextLabel.getTotalCost(), label [successor.getOrigin().getId()].getCost()+  data.getCost(successor) + label[nextNodeID].getEstimatedCost());
+            			
+            			if (new_cost < nextLabel.getTotalCost()) {
+            				double toUpdate = label[successor.getOrigin().getId()].getCost() + data.getCost(successor); 
             				//si le nouveau cout est différent de l'ancien on le met à jour
-            				if (label[nextNodeID].getCost()!=Double.POSITIVE_INFINITY) {
-            					//y était déjà dans le tas donc on l'enlève pour le met à jour 
-            					label[nextNodeID].setCost(new_cost);
-            					//heap.remove(label[nextNodeID]);
+          					//y était déjà dans le tas donc on l'enlève pour le mettre à jour 
+            			        label[nextNodeID].setCost(toUpdate);
+            					//heap.remove(label[currentID]);
             					heap.insert(nextLabel);
             					//on met à jour son père
                 				label[nextNodeID].setPere(successor);
-            				}
-            				else {
-            					label[nextNodeID].setCost(new_cost);
-                				heap.insert(nextLabel);
-                				label[nextNodeID].setPere(successor);
-                				this.notifyNodeReached(nextNode);
-            				}
+                				
+                				if (label[nextNodeID].getCost()!=Double.POSITIVE_INFINITY)
+                					this.notifyNodeReached(nextNode);
+            				
             				nb_explores++;            					
             			}          		
             		}
                 } 
             }
-            //System.out.println("Le nombre de successeurs explorés est : " + nb_explores + " pour " + currentNode.getNumberOfSuccessors() + " successeur(s).");
+            //System.out.println("Nbr de successeurs explorés : " + nb_explores + " pour " + currentNode.getNumberOfSuccessors() + " successeurs");
         	nb_explores = 0;     
         } 
        }
@@ -147,7 +143,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
            
            Path path = new Path(graphe, arcs);           
            //comparaison du résultat de Dijksra avec celui du path
-           System.out.println("Chemin valide ? " + solution.getPath().isValid());
+          // System.out.println("Chemin valide ? " + solution.getPath().isValid());
            
            //Sont-ils égaux en distance ?
            if ((int)PathFoundByDijkstra ==(int)path.getLength()) {
@@ -155,8 +151,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
            }
        }
        
- 
-        
+       
         return solution;
     }
 }
